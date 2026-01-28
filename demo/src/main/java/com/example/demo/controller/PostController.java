@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.PostDetailResponse;
 import com.example.demo.dto.PostRequest;
 import com.example.demo.dto.PostResponse;
+import com.example.demo.dto.PostUpdateRequest;
 import com.example.demo.entity.Post;
 import com.example.demo.repository.PostRepository;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -65,13 +67,41 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<PostDetailResponse> updatePost(@PathVariable Long id, @RequestBody PostUpdateRequest update) {
+        Optional<Post> optional = postRepository.findById(id);
+        if (!optional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        Post post = optional.get();
+        if (update.getTitle() != null) post.setTitle(update.getTitle());
+        if (update.getExcerpt() != null) post.setExcerpt(update.getExcerpt());
+        if (update.getContent() != null) post.setContent(update.getContent());
+        if (update.getTags() != null) post.setTags(update.getTags());
+
+        Post saved = postRepository.save(post);
+        return ResponseEntity.ok(convertToPostDetailResponse(saved));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePost(@PathVariable Long id) {
+        Optional<Post> optional = postRepository.findById(id);
+        if (!optional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        postRepository.delete(optional.get());
+        return ResponseEntity.ok().build();
+    }
+
     private PostResponse convertToPostResponse(Post post) {
+        String image = "post-1.jpg"; // frontend expects this default thumbnail
         return new PostResponse(
                 post.getId(),
                 post.getTitle(),
                 post.getExcerpt(),
                 post.getCreatedAt(),
-                post.getTags()
+                post.getTags(),
+                image
         );
     }
 

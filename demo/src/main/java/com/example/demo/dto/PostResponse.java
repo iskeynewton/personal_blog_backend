@@ -9,15 +9,17 @@ public class PostResponse {
     private String excerpt;
     private LocalDateTime createdAt;
     private List<String> tags;
+    private String image; // new field for thumbnail/image name or URL
 
     public PostResponse() {}
 
-    public PostResponse(Long id, String title, String excerpt, LocalDateTime createdAt, List<String> tags) {
+    public PostResponse(Long id, String title, String excerpt, LocalDateTime createdAt, List<String> tags, String image) {
         this.id = id;
         this.title = title;
         this.excerpt = excerpt;
         this.createdAt = createdAt;
         this.tags = tags;
+        this.image = image;
     }
 
     public Long getId() {
@@ -58,5 +60,13 @@ public class PostResponse {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

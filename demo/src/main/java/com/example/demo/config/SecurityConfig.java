@@ -30,6 +30,11 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.GET, "/api/posts", "/api/posts/*", "/api/comments").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/posts").authenticated()
                 .antMatchers(HttpMethod.POST, "/api/comments").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/comments/verify/request").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/comments/*/verify").permitAll()
+                // PUT/DELETE on comments: handler will check token or admin; allow through to controller
+                .antMatchers(HttpMethod.PUT, "/api/comments/*").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/api/comments/*").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
